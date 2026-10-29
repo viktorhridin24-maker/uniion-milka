@@ -30,25 +30,35 @@ class PCController:
         if not path:
             return {"status": "error", "message": "Путь к программе не указан"}
         
-        # Переводим в нижний регистр для проверки синонимов
         clean_path = path.lower().strip()
         
-        # Умный маппинг популярных программ
+        # Синонимы для VS Code
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
             path = "code"
-        elif clean_path in ["браузер", "chrome", "хром"]:
-            path = "google-chrome" if self.platform != "win32" else "chrome"
+            
+        # Синонимы для Хрома с жесткими путями (для обхода проблем с PATH)
+        elif clean_path in ["braузер", "chrome", "хром", "google chrome"]:
+            if self.platform == "win32":
+                possible_paths = [
+                    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+                    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+                ]
+                path = "chrome"
+                for p in possible_paths:
+                    if os.path.exists(p):
+                        path = f'"{p}"'
+                        break
+            else:
+                path = "google-chrome"
 
         logger.info(f"Попытка запустить: {path}")
 
         if self.platform == "win32":
-            # На Windows используем start через shell, чтобы подхватывать системные алиасы типа 'code'
             os.system(f"start {path}")
         else:
-            # На Linux запускаем процесс напрямую
             subprocess.Popen([path], shell=True)
             
-        return {"status": "success", "message": f"Запущено приложение: {path}"}
+        return {"status": "success", "message": f"Запущен процесс: {path}"}
 
     def _shutdown_pc(self) -> Dict[str, Any]:
         if self.platform == "win32":
@@ -65,3 +75,4 @@ class PCController:
             return {"status": "success", "output": result.stdout}
         else:
             return {"status": "error", "output": result.stderr}
+
