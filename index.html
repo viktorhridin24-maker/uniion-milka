@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>uniion — плагин, который реально uniiiionит</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--fg:#fff;--mute:#9a9a9a;--line:#333;--hd:'Unbounded','Arial Black',sans-serif;--bd:'Golos Text','Segoe UI',Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#fff;--fg:#000;--mute:#5d5d5d;--line:#cfcfcf}}
+:root[data-theme="light"]{--bg:#fff;--fg:#000;--mute:#5d5d5d;--line:#cfcfcf}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 1.0625rem/1.6 var(--bd)}
+.w{max-width:64rem;margin:0 auto;padding:0 1.25rem}
+a{color:inherit;text-underline-offset:.25em}
+:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;min-height:92vh;padding:2.5rem 0}
+.logo{display:block;width:min(15rem,60%);height:auto;color:var(--fg)}
+h1{font:700 clamp(1.7rem,4.4vw,3rem)/1.15 var(--hd);letter-spacing:-.02em;margin:1.8rem 0 1rem;min-height:5.2em}
+.sub{color:var(--mute);max-width:32rem;margin:0 0 1.6rem}
+.tri{background:none;border:0;padding:0;cursor:pointer;color:var(--fg);justify-self:center;width:100%;max-width:26rem}
+.tri svg{width:100%;height:auto;display:block;transition:transform .25s}
+.tri:active svg{transform:rotate(-6deg) scale(.97)}
+.hint{color:var(--mute);font-size:.9rem;margin:0}
+.btn{font:500 1rem var(--bd);background:var(--fg);color:var(--bg);border:2px solid var(--fg);padding:.8rem 1.3rem;cursor:pointer}
+.btn:hover{background:var(--bg);color:var(--fg)}
+section{padding:4.5rem 0;border-top:1px solid var(--line)}
+h2{font:700 clamp(1.4rem,3.2vw,2.1rem)/1.2 var(--hd);letter-spacing:-.02em;margin:0 0 2rem;max-width:34rem}
+.row{display:grid;grid-template-columns:13rem 1fr;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
+.row b{font:500 1.1rem var(--hd)}.row span{color:var(--mute)}
+ol{list-style:none;margin:0;padding:0;counter-reset:s}
+li{counter-increment:s;display:grid;grid-template-columns:4rem 1fr;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
+li::before{content:counter(s);font:700 2.6rem/1 var(--hd)}
+li b{display:block;font:500 1.15rem var(--hd);margin-bottom:.3rem}li span{color:var(--mute)}
+.inst{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin-top:2rem}
+code{font:500 .95rem ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);padding:.8rem 1rem;overflow-x:auto;max-width:100%;white-space:nowrap}
+details{border-bottom:1px solid var(--line);padding:1.1rem 0}
+summary{cursor:pointer;font:500 1.1rem var(--hd);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";float:right}details[open] summary::after{content:"–"}
+details p{color:var(--mute);margin:.8rem 0 0;max-width:40rem}
+footer{border-top:1px solid var(--line);padding:2.5rem 0 3rem;color:var(--mute);font-size:.95rem}
+footer .w{display:flex;flex-wrap:wrap;gap:1rem 2.5rem;justify-content:space-between;align-items:center}
+footer svg{height:1.6rem;width:auto;color:var(--fg)}
+@media (max-width:720px){.hero{grid-template-columns:1fr;min-height:0}.tri{order:-1;max-width:15rem;justify-self:start}.row{grid-template-columns:1fr;gap:.2rem}h1{min-height:7em}}
+@media (prefers-reduced-motion:reduce){.tri svg{transition:none}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ic" viewBox="-312 -416 1264 1192"><path d="M320,-415.33689l631.57505,1190.6742h-1263.15z" fill="currentColor"/><path d="M181.72581,32.30029h57.36772l-125.24959,295.39963h-57.23674zM278.91716,32.30029h57.23674l-125.11861,295.39963h-57.36772z" fill="var(--bg)"/><path d="M290.87168,369.7277c-8.09439,58.01072 -33.15643,104.74097 -84.25968,115.02931c-60.21966,12.12377 -94.76372,-24.74394 -104.04396,-70.83959l53.40255,-20.10355c3.59997,23.19045 14.56618,41.82492 40.75985,36.55153c16.05003,-3.23127 25.79403,-16.5494 32.77794,-38.93131z" fill="var(--bg)"/></symbol>
+<symbol id="tx" viewBox="0 0 143.52135 33.02405"><g transform="translate(-168.23932,-163.54354)"><path fill="currentColor" d="M195.81973,165.59908v28.87694h-5.00172l-0.3819,-4.52126c-2.21751,3.07988 -5.87641,5.00172 -10.20056,5.00172c-6.15976,0 -10.49622,-4.42271 -10.49622,-11.06292v-18.29448h5.77785v16.75454c0,4.90317 2.4023,7.6997 6.35687,7.6997c4.52126,0 8.18016,-3.27699 8.18016,-7.89681v-16.55742zM225.62165,176.34099v18.28216h-5.77785v-16.74222c0,-4.91549 -2.4023,-7.6997 -6.34455,-7.6997c-4.53358,0 -8.19248,3.26467 -8.19248,7.88449v16.55742h-5.76553v-28.87694h5.00172l0.3819,4.52126c2.21751,-3.07988 5.87641,-5.00172 10.20056,-5.00172c6.15976,0 10.49622,4.43502 10.49622,11.07524zM239.08561,166.05195h5.39595l-12.53897,28.5431h-5.38363zM248.03781,166.05195h5.38363l-12.52665,28.5431h-5.39595zM251.98553,179.94445c0,-8.85773 5.96264,-14.91893 14.63558,-14.91893c8.84541,0 14.62326,5.87641 14.62326,14.91893c0,8.85773 -5.96264,14.91893 -14.62326,14.91893c-8.85773,0 -14.63558,-5.87641 -14.63558,-14.91893zM275.38028,179.93829c0,-6.0612 -3.4741,-10.00344 -8.75917,-10.00344c-5.29739,0 -8.75917,3.94224 -8.75917,10.00344c0,6.0612 3.46178,10.01576 8.75917,10.01576c5.28507,0 8.75917,-3.95456 8.75917,-10.01576zM310.26068,176.00766v18.28216h-5.77785v-16.74222c0,-4.91549 -2.4023,-7.6997 -6.35687,-7.6997c-4.52126,0 -8.18016,3.26467 -8.18016,7.88449v16.55742h-5.76553v-28.87694h5.00172l0.3819,4.52126c2.21751,-3.07988 5.87641,-5.00172 10.20056,-5.00172c6.15976,0 10.49622,4.43502 10.49622,11.07524z"/></g></symbol></svg>
+<main class="w"><div class="hero"><div>
+<svg class="logo" role="img" aria-label="uniion" viewBox="0 0 143.52135 33.02405"><use href="#tx"/></svg>
+<h1 id="tag" aria-live="polite">эй, ребят, давайте все признаем, что этот плагин реально uniiiionит?</h1>
+<p class="sub">плагин для милки, который подружит её с телеграмом, vs code и твоим самописным апи. да, мы сами удивлены, что это работает.</p>
+<a class="btn" href="#install" style="text-decoration:none;display:inline-block">ну ладно, показывай как ставить</a></div>
+<div><button class="tri" id="tri" aria-label="сменить подпись"><svg viewBox="-312 -416 1264 1192"><use href="#ic"/></svg></button><p class="hint" style="text-align:center">нажми на треугольник. ну нажми. что тебе, жалко?</p></div></div>
+
+<section><h2>что оно вообще объединяет</h2>
+<div class="row"><b>telegram bot api</b><span>милка научится писать в твоих ботов. боты, как обычно, будут делать вид, что так и задумано.</span></div>
+<div class="row"><b>vs code</b><span>редактор, в котором ты и так живёшь. теперь с ещё одной нейронкой, которая знает лучше.</span></div>
+<div class="row"><b>твой custom api</b><span>тот самый, с эндпоинтами «потом поправлю». мы не осуждаем. ну, почти.</span></div></section>
+
+<section><h2>как это работает (спойлер: без магии)</h2>
+<ol><li><div><b>ты скармливаешь милке ссылку</b><span>на этот репозиторий. всё. никакого конфига, никаких танцев с бубном.</span></div></li>
+<li><div><b>милка читает инструкции</b><span>плагин живёт на уровне системных промптов, так что она просто читает и принимает к сведению. как ты — правила в чате, только внимательнее.</span></div></li>
+<li><div><b>нейронка учится</b><span>в каком формате принимать твои api-ключи прямо в чате и как собирать нормальные запросы к телеграму и vs code.</span></div></li></ol></section>
+
+<section id="install"><h2>установка за три клика, мы засекали</h2>
+<ol><li><div><b>скопируй ссылку</b><span>на репозиторий. кнопка ниже сделает это за тебя, мы же не звери.</span></div></li>
+<li><div><b>вставь её в милку</b><span>в поле «repository or folder url».</span></div></li>
+<li><div><b>нажми «install skill»</b><span>и наслаждайся тем, как всё uniiiionится.</span></div></li></ol>
+<div class="inst"><code id="lnk">https://github.com/viktorhridin24-maker/uniion-milka/</code><button class="btn" id="cp">скопировать</button><span id="ok" role="status" style="color:var(--mute)"></span></div></section>
+
+<section><h2>вопросы, которые вы всё равно зададите</h2>
+<details><summary>это точно питон?</summary><p>в описании репозитория написано «модульный python-плагин». по факту это промпт-скилл: инструкции для милки, а не горы кода. звучит солидно, но мы честные.</p></details>
+<details><summary>а ключи от api в чат кидать нормально?</summary><p>по задумке плагина милка принимает ключи прямо в чате. хочешь — кидай, хочешь — подумай ещё раз и не отправляй то, что жалко потерять. твои ключи, твоя паранойя.</p></details>
+<details><summary>сколько это стоит?</summary><p>ничего: лицензия mit. звёзд на гитхабе, кстати, тоже ноль (на момент создания сайта, 23 коммита). так что, если что, ты знаешь, куда нажать.</p></details></section></main>
+
+<footer><div class="w"><svg role="img" aria-label="uniion" viewBox="0 0 143.52135 33.02405"><use href="#tx"/></svg>
+<span>сделали <a href="https://t.me/mynameisviktor1502">@mynameisviktor1502</a> и <a href="https://github.com/viktorhridin24-maker">viktorhridin24-maker</a>. лицензия mit, делайте что хотите.</span>
+<a href="https://github.com/viktorhridin24-maker/uniion-milka">репозиторий на гитхабе</a></div></footer>
+<script>
+const T=["эй, ребят, давайте все признаем, что этот плагин реально uniiiionит?","плагин, который объединяет. в отличие от твоей семьи на новый год.","uniiiiiiiiion. сколько «i» — решай сам, мы не жадные.","соединяем милку с телеграмом. да, она сама попросила.","ноль строк кода с твоей стороны. наконец-то честная работа."];
+let i=0;const tag=document.getElementById('tag');
+document.getElementById('tri').addEventListener('click',()=>{i=(i+1)%T.length;tag.textContent=T[i]});
+document.getElementById('cp').addEventListener('click',async()=>{const o=document.getElementById('ok');
+try{await navigator.clipboard.writeText(document.getElementById('lnk').textContent);o.textContent='скопировано. мы тобой гордимся.'}
+catch(e){o.textContent='не вышло, выдели и скопируй сам. мы верим в тебя.'}});
+</script></body></html>
