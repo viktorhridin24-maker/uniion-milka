@@ -26,33 +26,32 @@ class PCController:
             logger.error(f"Ошибка при выполнении {action}: {e}")
             return {"status": "error", "message": str(e)}
 
-    def _open_program(self, path: str) -> Dict[str, Any]:
+      def _open_program(self, path: str) -> Dict[str, Any]:
         if not path:
             return {"status": "error", "message": "Путь к программе не указан"}
         
         clean_path = path.lower().strip()
         
-        # Синонимы для VS Code
+        # Синонимы для VS Code (с проверкой стандартного пути установки)
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
-            path = "code"
-
+            if self.platform == "win32":
+                appdata_local = os.environ.get("LOCALAPPDATA", "")
+                vscode_path = os.path.join(appdata_local, "Programs", "Microsoft VS Code", "Code.exe")
+                path = f'"{vscode_path}"' if os.path.exists(vscode_path) else "code"
+            else:
+                path = "code"
+            
+        # Синонимы к спотику (уже проверенный Роуминг)
         elif clean_path in ["spotify", "спотифай", "музыка"]:
             if self.platform == "win32":
-                # Берем путь к Roaming AppData текущего пользователя
                 appdata_roaming = os.environ.get("APPDATA", "")
                 official_path = os.path.join(appdata_roaming, "Spotify", "Spotify.exe")
-                
-                if os.path.exists(official_path):
-                    path = f'"{official_path}"'
-                else:
-                    path = "spotify"  # Откат на случай сюрпризов
+                path = f'"{official_path}"' if os.path.exists(official_path) else "spotify"
             else:
                 path = "spotify"
 
-
-            
-        # Синонимы для Хрома с жесткими путями (для обхода проблем с PATH)
-        elif clean_path in ["braузер", "chrome", "хром", "google chrome"]:
+        # Синонимы для Хрома
+        elif clean_path in ["браузер", "chrome", "хром", "google chrome"]:
             if self.platform == "win32":
                 possible_paths = [
                     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
