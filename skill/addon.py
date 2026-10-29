@@ -1,9 +1,15 @@
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import Dict, Any
 
-# Импортируем модули управления ПК и кастомных API
+# Добавляем текущую папку плагина в пути поиска Python
+BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+# Теперь импорты не упадут, где бы Милка ни запускала плагин
 from providers.pc_control import PCController
 from providers.custom import CustomAPIProvider
 
