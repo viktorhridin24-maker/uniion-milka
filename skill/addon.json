@@ -4,5 +4,21 @@
   "description": "Modular Python plugin to connect external services and control PC.",
   "author": "viktorhridin24-maker",
   "entry_file": "addon.py",
-  "icon": "униион иконка.svg"
+  "icon": "униион иконка.svg",
+  "tools": [
+    {
+      "name": "open_program",
+      "description": "Запускает указанную программу, открывает файл или веб-сайт на компьютере пользователя.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Полный путь к программе, файлу или URL-ссылка сайта (например, https://google.com)"
+          }
+        },
+        "required": ["path"]
+      }
+    }
+  ]
 }
