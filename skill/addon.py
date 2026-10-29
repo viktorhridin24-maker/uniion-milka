@@ -3,7 +3,7 @@ import logging
 import sys
 import traceback
 from pathlib import Path
-from typing import Dict, Any 
+from typing import Dict, Any
 
 ### Настройка путей
 
