@@ -2,7 +2,7 @@
   "name": "uniion",
   "version": "1.0.0",
   "description": "Modular Python plugin to connect external services and control PC.",
-  "author": "viktrpar34_dev",
-  "entry_file": "skill/core.py",
+  "author": "viktorhridin24-maker",
+  "entry_file": "addon.py",
   "icon": "униион иконка.svg"
 }
