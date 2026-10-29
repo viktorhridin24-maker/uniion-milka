@@ -19,6 +19,15 @@ try:
     logger = logging.getLogger("uniion")
 
     class UniionPlugin:
+            def get_system_prompt(self) -> str:
+        """Передает Милке инструкцию о том, что она умеет управлять ПК."""
+        return (
+            "Ты — ИИ Милка с установленным плагином uniion. "
+            "Ты ИМЕЕШЬ ДОСТУП к компьютеру пользователя и МОЖЕШЬ открывать программы, "
+            "сайты и файлы локально. Когда тебя просят запустить программу (например, VS Code), "
+            "используй функцию execute_command с сервисом 'pc' и действием 'open_program'."
+        )
+
         def __init__(self):
             self.base_dir = BASE_DIR
             self.config_path = self.base_dir / "config.json"
