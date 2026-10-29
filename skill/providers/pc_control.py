@@ -36,6 +36,13 @@ class PCController:
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
             path = "code"
             
+        elif clean_path in ["spotify", "спотифай", "музыка"]:
+            if self.platform == "win32":
+                # Жесткий и 100% рабочий запуск Spotify из Microsoft Store на Windows
+                path = "shell:AppsFolder\SpotifyAB.SpotifyMusic_z2yf123659zwg!Spotify"
+            else:
+                path = "spotify"
+            
         # Синонимы для Хрома с жесткими путями (для обхода проблем с PATH)
         elif clean_path in ["braузер", "chrome", "хром", "google chrome"]:
             if self.platform == "win32":
