@@ -35,13 +35,22 @@ class PCController:
         # Синонимы для VS Code
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
             path = "code"
-            
-        elif clean_path in ["spotify", "спотифай", "музыка"]:
+
+            # синонимы к спотику
+               elif clean_path in ["spotify", "спотифай", "музыка"]:
             if self.platform == "win32":
-                # Жесткий и 100% рабочий запуск Spotify из Microsoft Store на Windows
-                path = "shell:AppsFolder\SpotifyAB.SpotifyMusic_z2yf123659zwg!Spotify"
+                # Находим путь к AppData текущего пользователя Windows
+                appdata_local = os.environ.get("LOCALAPPDATA", "")
+                official_path = os.path.join(appdata_local, "Spotify", "Spotify.exe")
+                
+                # Если файл существует по стандартному пути оф. сайта
+                if os.path.exists(official_path):
+                    path = f'"{official_path}"'
+                else:
+                    path = "spotify"  # Откат на дефолт
             else:
                 path = "spotify"
+
             
         # Синонимы для Хрома с жесткими путями (для обхода проблем с PATH)
         elif clean_path in ["braузер", "chrome", "хром", "google chrome"]:
