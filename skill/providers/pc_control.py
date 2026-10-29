@@ -36,20 +36,19 @@ class PCController:
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
             path = "code"
 
-            # синонимы к спотику
-               elif clean_path in ["spotify", "спотифай", "музыка"]:
+        elif clean_path in ["spotify", "спотифай", "музыка"]:
             if self.platform == "win32":
-                # Находим путь к AppData текущего пользователя Windows
-                appdata_local = os.environ.get("LOCALAPPDATA", "")
-                official_path = os.path.join(appdata_local, "Spotify", "Spotify.exe")
+                # Берем путь к Roaming AppData текущего пользователя
+                appdata_roaming = os.environ.get("APPDATA", "")
+                official_path = os.path.join(appdata_roaming, "Spotify", "Spotify.exe")
                 
-                # Если файл существует по стандартному пути оф. сайта
                 if os.path.exists(official_path):
                     path = f'"{official_path}"'
                 else:
-                    path = "spotify"  # Откат на дефолт
+                    path = "spotify"  # Откат на случай сюрпризов
             else:
                 path = "spotify"
+
 
             
         # Синонимы для Хрома с жесткими путями (для обхода проблем с PATH)
