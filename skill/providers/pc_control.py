@@ -26,13 +26,13 @@ class PCController:
             logger.error(f"Ошибка при выполнении {action}: {e}")
             return {"status": "error", "message": str(e)}
 
-      def _open_program(self, path: str) -> Dict[str, Any]:
+    def _open_program(self, path: str) -> Dict[str, Any]:
         if not path:
             return {"status": "error", "message": "Путь к программе не указан"}
         
         clean_path = path.lower().strip()
         
-        # Синонимы для VS Code (с проверкой стандартного пути установки)
+        # Синонимы для VS Code
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
             if self.platform == "win32":
                 appdata_local = os.environ.get("LOCALAPPDATA", "")
@@ -41,7 +41,7 @@ class PCController:
             else:
                 path = "code"
             
-        # Синонимы к спотику (уже проверенный Роуминг)
+        # Синонимы для Spotify (Идеальный Роуминг)
         elif clean_path in ["spotify", "спотифай", "музыка"]:
             if self.platform == "win32":
                 appdata_roaming = os.environ.get("APPDATA", "")
@@ -67,12 +67,13 @@ class PCController:
 
         logger.info(f"Попытка запустить: {path}")
 
+        # Асинхронный запуск без блокировки и ожидания ответа консоли
         if self.platform == "win32":
-            os.system(f"start {path}")
+            subprocess.Popen(f"start {path}", shell=True)
         else:
             subprocess.Popen([path], shell=True)
             
-        return {"status": "success", "message": f"Запущен процесс: {path}"}
+        return {"status": "success", "message": f"Программа {path} успешно запущена в системе."}
 
     def _shutdown_pc(self) -> Dict[str, Any]:
         if self.platform == "win32":
@@ -89,4 +90,3 @@ class PCController:
             return {"status": "success", "output": result.stdout}
         else:
             return {"status": "error", "output": result.stderr}
-
