@@ -67,17 +67,24 @@ class PCController:
             return {"status": "error", "message": f"Не удалось открыть: {str(e)}"}
 
 
-    def _create_file(self, path: str, content: str) -> Dict[str, Any]:
+        def _create_file(self, path: str, content: str) -> Dict[str, Any]:
         if not path:
             return {"status": "error", "message": "Путь к файлу не указан"}
         try:
-            file_path = Path(path)
+            # Превращаем сырую строку в нормальный путь, заменяя обратные слэши на прямые
+            safe_path = path.replace("\\", "/")
+            file_path = Path(safe_path)
+            
+            # Создаем папки, если их нет
             file_path.parent.mkdir(parents=True, exist_ok=True)
+            
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
-            return {"status": "success", "message": f"Файл успешно создан по пути: {path}"}
+            return {"status": "success", "message": f"Файл успешно создан."}
         except Exception as e:
+            logger.error(f"Ошибка создания файла: {e}")
             return {"status": "error", "message": str(e)}
+
 
     def _shutdown_pc(self) -> Dict[str, Any]:
         if self.platform == "win32":
