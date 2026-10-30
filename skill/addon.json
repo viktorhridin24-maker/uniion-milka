@@ -3,8 +3,12 @@
   "name": "uniion",
   "version": "1.0.0",
   "api": 1,
-  "description": "Модульный плагин для интеграции внешних сервисов и управления ПК.",
+  "description": "Модульный плагин для интеграции внешних сервисов, Telegram Bot API и управления ПК.",
   "entry": "addon.py",
-  "icon": "униион иконка.svg"
+  "icon": "униион иконка.svg",
+  "permissions": [
+    "network",
+    "files",
+    "system"
+  ]
 }
-
