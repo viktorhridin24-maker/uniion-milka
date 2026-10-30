@@ -27,27 +27,23 @@ class PCController:
             logger.error(f"Ошибка при выполнении {action}: {e}")
             return {"status": "error", "message": str(e)}
 
-    def _open_program(self, path: str) -> Dict[str, Any]:
+        def _open_program(self, path: str) -> Dict[str, Any]:
         if not path:
             return {"status": "error", "message": "Путь к программе не указан"}
         
         clean_path = path.lower().strip()
         
-        # 1. Синонимы для VS Code
+        # 1. Запуск VS Code через системный URI-протокол (без путей и кириллицы!)
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
             if self.platform == "win32":
-                appdata_local = os.environ.get("LOCALAPPDATA", "")
-                target_path = Path(appdata_local) / "Programs" / "Microsoft VS Code" / "Code.exe"
-                path = str(target_path)
+                path = "vscode:"
             else:
                 path = "code"
             
-        # 2. Синонимы для Spotify (Твой точный путь из Roaming)
+        # 2. Запуск Spotify через системный URI-протокол (ЖЕЛЕЗОБЕТОННО)
         elif clean_path in ["spotify", "спотифай", "музыка", "спотик"]:
             if self.platform == "win32":
-                appdata_roaming = os.environ.get("APPDATA", "")
-                target_path = Path(appdata_roaming) / "Spotify" / "Spotify.exe"
-                path = str(target_path)
+                path = "spotify:"
             else:
                 path = "spotify"
 
@@ -57,18 +53,19 @@ class PCController:
         elif clean_path in ["firefox", "фаерфокс", "лиса"]:
             path = r"C:\Program Files\Mozilla Firefox\firefox.exe" if self.platform == "win32" else "firefox"
 
-        logger.info(f"Запуск процесса: {path}")
+        logger.info(f"Запуск через протокол или путь: {path}")
 
         try:
             if self.platform == "win32":
-                # Хитрый синтаксис Windows: первые пустые кавычки "" защищают от создания пустого окна cmd!
-                os.system(f'start "" "{path}"')
+                # Для протоколов типа 'spotify:' или 'vscode:' startfile работает идеально нативно
+                os.startfile(path)
             else:
                 subprocess.Popen([path], shell=True if " " in path else False)
                 
             return {"status": "success", "message": "Программа успешно запущена."}
         except Exception as e:
             return {"status": "error", "message": f"Не удалось открыть: {str(e)}"}
+
 
     def _create_file(self, path: str, content: str) -> Dict[str, Any]:
         if not path:
