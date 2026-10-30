@@ -19,6 +19,8 @@ class PCController:
                 return self._open_program(params.get("path", ""))
             elif action == "create_file":
                 return self._create_file(params.get("path", ""), params.get("content", ""))
+            elif action == "read_file":
+                return self._read_file(params.get("path", ""))
             elif action == "shutdown":
                 return self._shutdown_pc()
             else:
@@ -33,11 +35,18 @@ class PCController:
         
         clean_path = path.lower().strip()
         
-        # Синонимы для программ и протоколов
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
-            path = "vscode:" if self.platform == "win32" else "code"
+            if self.platform == "win32":
+                appdata_local = os.environ.get("LOCALAPPDATA", "")
+                path = os.path.join(appdata_local, "Programs", "Microsoft VS Code", "Code.exe")
+            else:
+                path = "code"
         elif clean_path in ["spotify", "спотифай", "музыка", "спотик"]:
-            path = "spotify:" if self.platform == "win32" else "spotify"
+            if self.platform == "win32":
+                appdata_roaming = os.environ.get("APPDATA", "")
+                path = os.path.join(appdata_roaming, "Spotify", "Spotify.exe")
+            else:
+                path = "spotify"
         elif clean_path in ["браузер", "chrome", "хром", "google chrome"]:
             path = r"C:\Program Files\Google\Chrome\Application\chrome.exe" if self.platform == "win32" else "google-chrome"
         elif clean_path in ["firefox", "фаерфокс", "лиса"]:
@@ -50,7 +59,7 @@ class PCController:
                 os.startfile(path)
             else:
                 subprocess.Popen([path], shell=True if " " in path else False)
-            return {"status": "success", "message": "Программа успешно запущена."}
+            return {"status": "success", "message": f"Программа {clean_path} успешно открыта."}
         except Exception as e:
             return {"status": "error", "message": f"Не удалось открыть: {str(e)}"}
 
@@ -66,6 +75,23 @@ class PCController:
             return {"status": "success", "message": "Файл успешно создан."}
         except Exception as e:
             logger.error(f"Ошибка создания файла: {e}")
+            return {"status": "error", "message": str(e)}
+
+    def _read_file(self, path: str) -> Dict[str, Any]:
+        """Читает содержимое указанного файла на ПК, чтобы передать его ИИ."""
+        if not path:
+            return {"status": "error", "message": "Путь к файлу не указан"}
+        try:
+            safe_path = path.replace("\\", "/")
+            file_path = Path(safe_path)
+            if not file_path.exists():
+                return {"status": "error", "message": "Указанный файл не найден."}
+            
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            return {"status": "success", "content": content}
+        except Exception as e:
+            logger.error(f"Ошибка чтения файла: {e}")
             return {"status": "error", "message": str(e)}
 
     def _shutdown_pc(self) -> Dict[str, Any]:
