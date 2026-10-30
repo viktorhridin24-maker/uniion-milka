@@ -32,48 +32,28 @@ class PCController:
         
         clean_path = path.lower().strip()
         
-        # Синонимы для VS Code
+        # Маппинг синонимов в правильные системные команды
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
-            if self.platform == "win32":
-                appdata_local = os.environ.get("LOCALAPPDATA", "")
-                vscode_path = os.path.join(appdata_local, "Programs", "Microsoft VS Code", "Code.exe")
-                path = f'"{vscode_path}"' if os.path.exists(vscode_path) else "code"
-            else:
-                path = "code"
-            
-        # Синонимы для Spotify (Идеальный Роуминг)
+            path = "code"
         elif clean_path in ["spotify", "спотифай", "музыка"]:
-            if self.platform == "win32":
-                appdata_roaming = os.environ.get("APPDATA", "")
-                official_path = os.path.join(appdata_roaming, "Spotify", "Spotify.exe")
-                path = f'"{official_path}"' if os.path.exists(official_path) else "spotify"
-            else:
-                path = "spotify"
-
-        # Синонимы для Хрома
+            path = "spotify"
         elif clean_path in ["браузер", "chrome", "хром", "google chrome"]:
+            path = "chrome"
+
+        logger.info(f"Попытка запустить процесс: {path}")
+
+        try:
             if self.platform == "win32":
-                possible_paths = [
-                    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-                    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-                ]
-                path = "chrome"
-                for p in possible_paths:
-                    if os.path.exists(p):
-                        path = f'"{p}"'
-                        break
+                # Флаг /B запускает приложение без открытия нового окна консоли cmd
+                subprocess.Popen(f"start /B {path}", shell=True)
             else:
-                path = "google-chrome"
+                subprocess.Popen([path], shell=True if self.platform == "win32" else False)
+                
+            return {"status": "success", "message": f"Программа {path} успешно открыта."}
+        except Exception as e:
+            logger.error(f"Сбой запуска: {e}")
+            return {"status": "error", "message": f"Не удалось запустить процесс: {str(e)}"}
 
-        logger.info(f"Попытка запустить: {path}")
-
-        # Асинхронный запуск без блокировки и ожидания ответа консоли
-        if self.platform == "win32":
-            subprocess.Popen(f"start {path}", shell=True)
-        else:
-            subprocess.Popen([path], shell=True)
-            
-        return {"status": "success", "message": f"Программа {path} успешно запущена в системе."}
 
     def _shutdown_pc(self) -> Dict[str, Any]:
         if self.platform == "win32":
