@@ -1,5 +1,4 @@
 import sys
-import os
 import json
 import logging
 from pathlib import Path
@@ -12,6 +11,7 @@ if str(BASE_DIR) not in sys.path:
 try:
     from providers.pc_control import PCController
     from providers.custom import CustomAPIProvider
+    from providers.telegram_api import TelegramProvider
     pc_handler = PCController()
 except Exception as e:
     pc_handler = None
@@ -74,6 +74,31 @@ def create_file(path: str, content: str, ctx: AddonContext):
     ctx.log(f"Вызов create_file для пути: {path}")
     result = pc_handler.execute_system_command("create_file", {"path": path, "content": content})
     return result.get("message", "Файл обработан")
+
+
+@tool(
+    "send_telegram_alert",
+    "Отправляет текстовое уведомление пользователю в Telegram через Bot API.",
+    {
+        "type": "object",
+        "properties": {
+            "text": {"type": "string", "description": "Текст сообщения для отправки в чат"}
+        },
+        "required": ["text"]
+    }
+)
+def send_telegram_alert(text: str, ctx: AddonContext):
+    """Инструмент для отправки живых алертов в Telegram из настроек Милки."""
+    # Безопасно вытаскиваем ключи из глобального settings.json Милки по совету Стёпы
+    tg_token = ctx.settings.get("telegram_token")
+    tg_chat_id = ctx.settings.get("telegram_chat_id")
+    
+    if not tg_token or not tg_chat_id:
+        return "Ошибка: В настройках плагина не заполнены telegram_token или telegram_chat_id."
+        
+    provider = TelegramProvider(token=tg_token, chat_id=tg_chat_id)
+    result = provider.send_message(text)
+    return result.get("message", "Статус отправки неизвестен")
 
 
 @tool(
