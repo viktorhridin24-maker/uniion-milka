@@ -1,4 +1,5 @@
 import sys
+import os
 import json
 import logging
 from pathlib import Path
@@ -37,6 +38,17 @@ def setup(ctx: AddonContext):
 def open_program(path: str, ctx: AddonContext):
     if not pc_handler:
         return "Ошибка: Модуль управления ПК не был инициализирован."
+    
+    clean_path = path.lower().strip()
+    
+    # Перехватываем Spotify на уровне API плагина и сразу подставляем точный путь Роуминга
+    if clean_path in ["spotify", "спотифай", "музыка", "спотик"]:
+        if sys.platform == "win32":
+            appdata_roaming = os.environ.get("APPDATA", "")
+            target_path = Path(appdata_roaming) / "Spotify" / "Spotify.exe"
+            if target_path.exists():
+                path = str(target_path)
+                ctx.log(f"Путь Spotify переопределен на: {path}")
     
     ctx.log(f"Вызов open_program для пути: {path}")
     result = pc_handler.execute_system_command("open_program", {"path": path})
