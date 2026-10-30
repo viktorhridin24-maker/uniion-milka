@@ -27,64 +27,46 @@ class PCController:
             logger.error(f"Ошибка при выполнении {action}: {e}")
             return {"status": "error", "message": str(e)}
 
-        def _open_program(self, path: str) -> Dict[str, Any]:
+    def _open_program(self, path: str) -> Dict[str, Any]:
         if not path:
             return {"status": "error", "message": "Путь к программе не указан"}
         
         clean_path = path.lower().strip()
         
-        # 1. Запуск VS Code через системный URI-протокол (без путей и кириллицы!)
+        # Синонимы для программ и протоколов
         if clean_path in ["vs code", "vscode", "вс код", "вскод"]:
-            if self.platform == "win32":
-                path = "vscode:"
-            else:
-                path = "code"
-            
-        # 2. Запуск Spotify через системный URI-протокол (ЖЕЛЕЗОБЕТОННО)
+            path = "vscode:" if self.platform == "win32" else "code"
         elif clean_path in ["spotify", "спотифай", "музыка", "спотик"]:
-            if self.platform == "win32":
-                path = "spotify:"
-            else:
-                path = "spotify"
-
-        # 3. Браузеры
+            path = "spotify:" if self.platform == "win32" else "spotify"
         elif clean_path in ["браузер", "chrome", "хром", "google chrome"]:
             path = r"C:\Program Files\Google\Chrome\Application\chrome.exe" if self.platform == "win32" else "google-chrome"
         elif clean_path in ["firefox", "фаерфокс", "лиса"]:
             path = r"C:\Program Files\Mozilla Firefox\firefox.exe" if self.platform == "win32" else "firefox"
 
-        logger.info(f"Запуск через протокол или путь: {path}")
+        logger.info(f"Запуск процесса: {path}")
 
         try:
             if self.platform == "win32":
-                # Для протоколов типа 'spotify:' или 'vscode:' startfile работает идеально нативно
                 os.startfile(path)
             else:
                 subprocess.Popen([path], shell=True if " " in path else False)
-                
             return {"status": "success", "message": "Программа успешно запущена."}
         except Exception as e:
             return {"status": "error", "message": f"Не удалось открыть: {str(e)}"}
 
-
-        def _create_file(self, path: str, content: str) -> Dict[str, Any]:
+    def _create_file(self, path: str, content: str) -> Dict[str, Any]:
         if not path:
             return {"status": "error", "message": "Путь к файлу не указан"}
         try:
-            # Превращаем сырую строку в нормальный путь, заменяя обратные слэши на прямые
             safe_path = path.replace("\\", "/")
             file_path = Path(safe_path)
-            
-            # Создаем папки, если их нет
             file_path.parent.mkdir(parents=True, exist_ok=True)
-            
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
-            return {"status": "success", "message": f"Файл успешно создан."}
+            return {"status": "success", "message": "Файл успешно создан."}
         except Exception as e:
             logger.error(f"Ошибка создания файла: {e}")
             return {"status": "error", "message": str(e)}
-
 
     def _shutdown_pc(self) -> Dict[str, Any]:
         if self.platform == "win32":
