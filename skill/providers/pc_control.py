@@ -61,14 +61,8 @@ class PCController:
 
         try:
             if self.platform == "win32":
-                # Если это полный путь к EXE-файлу на диске, запускаем скрытно через PowerShell
-                if "\\" in path or "/" in path:
-                    # Команда заставит PowerShell запустить плеер скрытно, без создания лишних окон cmd
-                    ps_command = f'Start-Process "{path}" -WindowStyle Normal'
-                    subprocess.Popen(["powershell", "-Command", ps_command], creationflags=subprocess.CREATE_NO_WINDOW)
-                else:
-                    # Откат для простых глобальных команд
-                    os.startfile(clean_path)
+                # Хитрый синтаксис Windows: первые пустые кавычки "" защищают от создания пустого окна cmd!
+                os.system(f'start "" "{path}"')
             else:
                 subprocess.Popen([path], shell=True if " " in path else False)
                 
