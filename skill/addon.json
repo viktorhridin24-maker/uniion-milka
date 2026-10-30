@@ -1,7 +1,7 @@
 {
   "id": "uniion",
   "name": "uniion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "api": 1,
   "description": "Модульный плагин для интеграции внешних сервисов, Telegram Bot API и управления ПК.",
   "entry": "addon.py",
