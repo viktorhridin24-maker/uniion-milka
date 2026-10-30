@@ -42,7 +42,7 @@ class PCController:
             else:
                 path = "code"
             
-        # 2. Синонимы для Spotify (Железобетонный путь через pathlib)
+        # 2. Синонимы для Spotify (Твой точный путь из Roaming)
         elif clean_path in ["spotify", "спотифай", "музыка", "спотик"]:
             if self.platform == "win32":
                 appdata_roaming = os.environ.get("APPDATA", "")
@@ -57,15 +57,17 @@ class PCController:
         elif clean_path in ["firefox", "фаерфокс", "лиса"]:
             path = r"C:\Program Files\Mozilla Firefox\firefox.exe" if self.platform == "win32" else "firefox"
 
-        logger.info(f"Запуск через os.startfile: {path}")
+        logger.info(f"Запуск процесса: {path}")
 
         try:
             if self.platform == "win32":
-                # Используем pathlib для проверки существования, он дружит с кириллицей
-                if Path(path).exists():
-                    os.startfile(path)
+                # Если это полный путь к EXE-файлу на диске, запускаем скрытно через PowerShell
+                if "\\" in path or "/" in path:
+                    # Команда заставит PowerShell запустить плеер скрытно, без создания лишних окон cmd
+                    ps_command = f'Start-Process "{path}" -WindowStyle Normal'
+                    subprocess.Popen(["powershell", "-Command", ps_command], creationflags=subprocess.CREATE_NO_WINDOW)
                 else:
-                    # Если путь не распознан, пробуем дёрнуть как глобальную команду
+                    # Откат для простых глобальных команд
                     os.startfile(clean_path)
             else:
                 subprocess.Popen([path], shell=True if " " in path else False)
