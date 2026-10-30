@@ -41,7 +41,6 @@ def open_program(path: str, ctx: AddonContext):
     
     clean_path = path.lower().strip()
     
-    # Перехватываем Spotify на уровне API плагина и сразу подставляем точный путь Роуминга
     if clean_path in ["spotify", "спотифай", "музыка", "спотик"]:
         if sys.platform == "win32":
             appdata_roaming = os.environ.get("APPDATA", "")
@@ -57,7 +56,7 @@ def open_program(path: str, ctx: AddonContext):
 
 @tool(
     "create_file",
-    "Создает файл с указанным кодом или текстом по выбранному пути на ПК.",
+    "Создает новый файл с указанным кодом или текстом по выбранному пути на ПК.",
     {
         "type": "object",
         "properties": {
@@ -77,6 +76,28 @@ def create_file(path: str, content: str, ctx: AddonContext):
 
 
 @tool(
+    "read_file",
+    "Читает содержимое текстового файла или скрипта по указанному пути на компьютере.",
+    {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string", "description": "Полный абсолютный путь к читаемому файлу"}
+        },
+        "required": ["path"]
+    }
+)
+def read_file(path: str, ctx: AddonContext):
+    if not pc_handler:
+        return "Ошибка: Модуль управления ПК не был инициализирован."
+    
+    ctx.log(f"Вызов read_file для пути: {path}")
+    result = pc_handler.execute_system_command("read_file", {"path": path})
+    if result.get("status") == "success":
+        return result.get("content", "Файл пуст")
+    return f"Ошибка: {result.get('message', 'Не удалось прочитать файл')}"
+
+
+@tool(
     "send_telegram_alert",
     "Отправляет текстовое уведомление пользователю в Telegram через Bot API.",
     {
@@ -88,8 +109,6 @@ def create_file(path: str, content: str, ctx: AddonContext):
     }
 )
 def send_telegram_alert(text: str, ctx: AddonContext):
-    """Инструмент для отправки живых алертов в Telegram из настроек Милки."""
-    # Безопасно вытаскиваем ключи из глобального settings.json Милки по совету Стёпы
     tg_token = ctx.settings.get("telegram_token")
     tg_chat_id = ctx.settings.get("telegram_chat_id")
     
