@@ -18,7 +18,7 @@ except Exception as e:
 
 
 def setup(ctx: AddonContext):
-    ctx.log("Плагин uniion успешно загружен в систему Milky!")
+    ctx.log("Плагин uniion v1.0.2 успешно загружен в Milky!")
 
 
 @tool(
@@ -40,16 +40,13 @@ def open_program(path: str, ctx: AddonContext):
         return "Ошибка: Модуль управления ПК не был инициализирован."
     
     clean_path = path.lower().strip()
-    
     if clean_path in ["spotify", "спотифай", "музыка", "спотик"]:
         if sys.platform == "win32":
             appdata_roaming = os.environ.get("APPDATA", "")
             target_path = Path(appdata_roaming) / "Spotify" / "Spotify.exe"
             if target_path.exists():
                 path = str(target_path)
-                ctx.log(f"Путь Spotify переопределен на: {path}")
     
-    ctx.log(f"Вызов open_program для пути: {path}")
     result = pc_handler.execute_system_command("open_program", {"path": path})
     return result.get("message", "Команда выполнена")
 
@@ -70,7 +67,6 @@ def create_file(path: str, content: str, ctx: AddonContext):
     if not pc_handler:
         return "Ошибка: Модуль управления ПК не был инициализирован."
     
-    ctx.log(f"Вызов create_file для пути: {path}")
     result = pc_handler.execute_system_command("create_file", {"path": path, "content": content})
     return result.get("message", "Файл обработан")
 
@@ -90,11 +86,29 @@ def read_file(path: str, ctx: AddonContext):
     if not pc_handler:
         return "Ошибка: Модуль управления ПК не был инициализирован."
     
-    ctx.log(f"Вызов read_file для пути: {path}")
     result = pc_handler.execute_system_command("read_file", {"path": path})
     if result.get("status") == "success":
         return result.get("content", "Файл пуст")
     return f"Ошибка: {result.get('message', 'Не удалось прочитать файл')}"
+
+
+@tool(
+    "take_screenshot",
+    "Делает снимок текущего экрана (скриншот) компьютера пользователя и сохраняет его в файл.",
+    {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string", "description": "Полный абсолютный путь для сохранения PNG-картинки скриншота."}
+        },
+        "required": ["path"]
+    }
+)
+def take_screenshot(path: str, ctx: AddonContext):
+    if not pc_handler:
+        return "Ошибка: Модуль управления ПК не был инициализирован."
+    
+    result = pc_handler.execute_system_command("take_screenshot", {"path": path})
+    return result.get("message", "Скриншот обработан")
 
 
 @tool(
@@ -113,33 +127,8 @@ def send_telegram_alert(text: str, ctx: AddonContext):
     tg_chat_id = ctx.settings.get("telegram_chat_id")
     
     if not tg_token or not tg_chat_id:
-        return "Ошибка: В настройках плагина не заполнены telegram_token или telegram_chat_id."
+        return "Ошибка: В настройках плагина не заполнены настройки Telegram."
         
     provider = TelegramProvider(token=tg_token, chat_id=tg_chat_id)
     result = provider.send_message(text)
     return result.get("message", "Статус отправки неизвестен")
-
-
-@tool(
-    "custom_api_request",
-    "Отправляет HTTP-запрос к кастомному API разработчика.",
-    {
-        "type": "object",
-        "properties": {
-            "endpoint": {"type": "string", "description": "Эндпоинт, например '/status'"},
-            "method": {"type": "string", "description": "HTTP метод: GET или POST"},
-            "payload": {"type": "object", "description": "JSON-данные для POST-запроса"}
-        },
-        "required": ["endpoint"]
-    }
-)
-def custom_api_request(endpoint: str, method: str = "GET", payload: dict = None, ctx: AddonContext = None):
-    base_url = ctx.settings.get("custom_api_url") if ctx else None
-    api_key = ctx.settings.get("custom_api_key") if ctx else None
-    
-    if not base_url:
-        return "Ошибка: В настройках Милки не задан Custom API Base URL."
-        
-    provider = CustomAPIProvider(base_url=base_url, api_key=api_key)
-    result = provider.send_request(endpoint, method, payload)
-    return json.dumps(result, ensure_ascii=False)
