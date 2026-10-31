@@ -18,7 +18,7 @@ except Exception as e:
 
 
 def setup(ctx: AddonContext):
-    ctx.log("Плагин uniion v1.0.2 успешно загружен в Milky!")
+    ctx.log("Плагин uniion v1.0.3 успешно загружен в Milky!")
 
 
 @tool(
@@ -90,6 +90,44 @@ def read_file(path: str, ctx: AddonContext):
     if result.get("status") == "success":
         return result.get("content", "Файл пуст")
     return f"Ошибка: {result.get('message', 'Не удалось прочитать файл')}"
+
+
+@tool(
+    "delete_file",
+    "Удаляет указанный файл по его полному абсолютному пути на ПК.",
+    {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string", "description": "Полный абсолютный путь к удаляемому файлу"}
+        },
+        "required": ["path"]
+    }
+)
+def delete_file(path: str, ctx: AddonContext):
+    if not pc_handler:
+        return "Ошибка: Модуль управления ПК не был инициализирован."
+    
+    result = pc_handler.execute_system_command("delete_file", {"path": path})
+    return result.get("message", "Файл обработан")
+
+
+@tool(
+    "list_dir",
+    "Сканирует указанную папку и возвращает список всех файлов и подпапок внутри неё.",
+    {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string", "description": "Полный абсолютный путь к сканируемой папке"}
+        },
+        "required": ["path"]
+    }
+)
+def list_dir(path: str, ctx: AddonContext):
+    if not pc_handler:
+        return "Ошибка: Модуль управления ПК не был инициализирован."
+    
+    result = pc_handler.execute_system_command("list_dir", {"path": path})
+    return result.get("message", "Папка обработана")
 
 
 @tool(
